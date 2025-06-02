@@ -25,6 +25,8 @@ const RegisterForm = () => {
     confirmPassword?: string;
   }>({});
 
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormValues({
       ...formValues,
@@ -65,6 +67,7 @@ const RegisterForm = () => {
     e.preventDefault();
 
     if (!validate()) return;
+    setLoading(true);
 
     try {
       await register({
@@ -85,6 +88,8 @@ const RegisterForm = () => {
       } else {
         toast.error("Registration failed. Try again.");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -166,8 +171,8 @@ const RegisterForm = () => {
             )}
           </div>
 
-          <Button type="submit" className="w-full">
-            Register
+          <Button type="submit" className="w-full" disabled={loading}>
+            {loading ? "Registering..." : "Register"}
           </Button>
         </form>
       </CardContent>

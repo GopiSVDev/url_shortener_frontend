@@ -8,8 +8,12 @@ import DashboardHome from "@/pages/DashboardHome";
 import UrlsPage from "@/pages/UrlsPage";
 import AnalyticsPage from "@/pages/AnalyticsPage";
 import UrlStatsPage from "@/components/UrlsPage/UrlStatsPage";
+import { useAuth } from "@/context/AuthContext";
+import RedirectWithToast from "./RedirectWithToast";
 
 const AppRoutes = () => {
+  const { isAuthenticated } = useAuth();
+
   return (
     <Routes>
       <Route path="/" element={<MainLayout />}>
@@ -19,18 +23,22 @@ const AppRoutes = () => {
         <Route
           path="dashboard/*"
           element={
-            <>
-              <Routes>
-                <Route index element={<DashboardHome />} />
-                <Route path="urls" element={<UrlsPage />} />
-                <Route path="urls/:id" element={<UrlStatsPage />} />
-                <Route path="analytics" element={<AnalyticsPage />} />
-                <Route
-                  path="*"
-                  element={<Navigate to="/dashboard" replace />}
-                />
-              </Routes>
-            </>
+            isAuthenticated ? (
+              <>
+                <Routes>
+                  <Route index element={<DashboardHome />} />
+                  <Route path="urls" element={<UrlsPage />} />
+                  <Route path="urls/:id" element={<UrlStatsPage />} />
+                  <Route path="analytics" element={<AnalyticsPage />} />
+                  <Route
+                    path="*"
+                    element={<Navigate to="/dashboard" replace />}
+                  />
+                </Routes>
+              </>
+            ) : (
+              <RedirectWithToast />
+            )
           }
         />
       </Route>
