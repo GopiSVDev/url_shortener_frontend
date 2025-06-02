@@ -5,6 +5,7 @@ import { CopyIcon, Loader2, QrCode } from "lucide-react";
 import { useState } from "react";
 import { shortenUrl } from "@/api/urlApi";
 import { toast } from "sonner";
+import { API_BASE_URL } from "@/api/authApi";
 
 const Home = () => {
   const [longUrl, setLongUrl] = useState("");
@@ -35,11 +36,12 @@ const Home = () => {
     }
 
     setLoading(true);
+
     try {
       const result = await shortenUrl(longUrl);
-      await new Promise((resolve) => setTimeout(resolve, 300));
       setShortUrl(result.shortUrl);
-      const url = "http://localhost:8080/qr/" + shortUrl;
+
+      const url = `${API_BASE_URL}/qr/` + result.shortCode;
       setQrUrl(url);
     } catch (error) {
       console.log("Error shortening URL", error);
@@ -127,9 +129,9 @@ const Home = () => {
           <div className="flex justify-center items-center min-w-[200px] md:w-[250px]">
             <div className="max-w-[250px] w-full border border-gray-200 dark:border-gray-700 rounded-3xl overflow-hidden">
               <AspectRatio ratio={1 / 1} className="w-full">
-                {shortUrl ? (
+                {qrUrl != "" ? (
                   <img
-                    src={qrUrl || ""}
+                    src={qrUrl}
                     alt="QR Code"
                     className="h-full w-full object-cover"
                   />
