@@ -1,9 +1,7 @@
-import axios from "axios";
-
-const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL;
+import axios, { API_BASE_URL } from "./axiosInstance";
 
 export const shortenUrl = async (longUrl: string) => {
-  const response = await axios.post(`${API_BASE_URL}/shorten`, {
+  const response = await axios.post("/shorten", {
     originalUrl: longUrl,
   });
 
