@@ -127,7 +127,7 @@ const Home = () => {
 
           {/* QR Image Section */}
           <div className="flex justify-center items-center min-w-[200px] md:w-[250px]">
-            <div className="max-w-[250px] w-full border border-gray-200 dark:border-gray-700 rounded-3xl overflow-hidden">
+            <div className="max-w-[250px] w-full border border-gray-200 dark:border-gray-100 rounded-3xl overflow-hidden">
               <AspectRatio ratio={1 / 1} className="w-full">
                 {qrUrl != "" ? (
                   <img

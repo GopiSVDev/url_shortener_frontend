@@ -112,7 +112,7 @@ const RegisterForm = () => {
               id="username"
               name="username"
               placeholder="Enter New Username"
-              className={`bg-slate-100 dark:bg-slate-500 border-0 focus-visible:ring-0 text-black focus-visible:ring-offset-0 dark:text-white ${
+              className={`border-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white ${
                 errors.username ? "border border-red-500" : ""
               }`}
               value={formValues.username}
@@ -135,7 +135,7 @@ const RegisterForm = () => {
               type="password"
               name="password"
               placeholder="Enter Password"
-              className={`bg-slate-100 dark:bg-slate-500 border-0 focus-visible:ring-0 text-black focus-visible:ring-offset-0 dark:text-white ${
+              className={`border-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white ${
                 errors.password ? "border border-red-500" : ""
               }`}
               value={formValues.password}
@@ -158,7 +158,7 @@ const RegisterForm = () => {
               type="password"
               name="confirmPassword"
               placeholder="Enter Confirm Password"
-              className={`bg-slate-100 dark:bg-slate-500 border-0 focus-visible:ring-0 text-black focus-visible:ring-offset-0 dark:text-white ${
+              className={`border-0 focus-visible:ring-0 focus-visible:ring-offset-0 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white ${
                 errors.confirmPassword ? "border border-red-500" : ""
               }`}
               value={formValues.confirmPassword}
@@ -171,7 +171,11 @@ const RegisterForm = () => {
             )}
           </div>
 
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button
+            type="submit"
+            className="w-full cursor-pointer text-white bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700"
+            disabled={loading}
+          >
             {loading ? "Registering..." : "Register"}
           </Button>
         </form>
