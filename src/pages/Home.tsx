@@ -5,7 +5,7 @@ import { CopyIcon, Loader2, QrCode } from "lucide-react";
 import { useState } from "react";
 import { shortenUrl } from "@/api/urlApi";
 import { toast } from "sonner";
-import { API_BASE_URL } from "@/api/authApi";
+import { API_BASE_URL } from "@/api/axiosInstance";
 
 const Home = () => {
   const [longUrl, setLongUrl] = useState("");

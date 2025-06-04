@@ -13,12 +13,14 @@ import { shortenUrl } from "@/api/urlApi";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import axios from "axios";
+import { useUserUrlStats } from "@/api/analyticsApi";
 
 export function SectionCards() {
   const [longUrl, setLongUrl] = useState("");
   const [shortUrl, setShortUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const { stats } = useUserUrlStats();
 
   const handleShorten = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -111,7 +113,7 @@ export function SectionCards() {
         <CardHeader className="relative">
           <CardDescription>Total Clicks</CardDescription>
           <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
-            500
+            {stats?.totalClicks}
           </CardTitle>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1 text-sm">
@@ -122,7 +124,7 @@ export function SectionCards() {
         <CardHeader className="relative">
           <CardDescription>Total Links</CardDescription>
           <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
-            19
+            {stats?.totalLinks}
           </CardTitle>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1 text-sm">
