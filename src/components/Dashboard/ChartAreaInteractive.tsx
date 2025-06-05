@@ -25,7 +25,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { chartData } from "@/data/dummyDashboardData";
+// import { chartData } from "@/data/dummyDashboardData";
+import { useUserUrlStats } from "@/api/analyticsApi";
 
 const chartConfig = {
   visitors: {
@@ -44,6 +45,7 @@ const chartConfig = {
 export function ChartAreaInteractive() {
   const isMobile = useIsMobile();
   const [timeRange, setTimeRange] = React.useState("30d");
+  const { stats } = useUserUrlStats();
 
   React.useEffect(() => {
     if (isMobile) {
@@ -51,18 +53,28 @@ export function ChartAreaInteractive() {
     }
   }, [isMobile]);
 
+  const chartData = Object.entries(stats?.clicksByDate || {}).map(
+    ([date, clicks]) => ({
+      date,
+      clicks,
+    })
+  );
+
   const filteredData = chartData.filter((item) => {
-    const date = new Date(item.date);
-    const referenceDate = new Date("2024-06-30");
+    const referenceDate = new Date();
+
     let daysToSubtract = 90;
     if (timeRange === "30d") {
       daysToSubtract = 30;
     } else if (timeRange === "7d") {
       daysToSubtract = 7;
     }
+
     const startDate = new Date(referenceDate);
     startDate.setDate(startDate.getDate() - daysToSubtract);
-    return date >= startDate;
+
+    const date = new Date(item.date);
+    return date >= startDate && date <= referenceDate;
   });
 
   return (
@@ -133,18 +145,6 @@ export function ChartAreaInteractive() {
                   stopOpacity={0.1}
                 />
               </linearGradient>
-              <linearGradient id="fillMobile" x1="0" y1="0" x2="0" y2="1">
-                <stop
-                  offset="5%"
-                  stopColor="var(--color-mobile)"
-                  stopOpacity={0.8}
-                />
-                <stop
-                  offset="95%"
-                  stopColor="var(--color-mobile)"
-                  stopOpacity={0.1}
-                />
-              </linearGradient>
             </defs>
             <CartesianGrid vertical={false} />
             <XAxis
@@ -176,14 +176,7 @@ export function ChartAreaInteractive() {
               }
             />
             <Area
-              dataKey="mobile"
-              type="natural"
-              fill="url(#fillMobile)"
-              stroke="var(--color-mobile)"
-              stackId="a"
-            />
-            <Area
-              dataKey="desktop"
+              dataKey="clicks"
               type="natural"
               fill="url(#fillDesktop)"
               stroke="var(--color-desktop)"
