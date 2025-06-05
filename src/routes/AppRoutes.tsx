@@ -10,9 +10,13 @@ import AnalyticsPage from "@/pages/AnalyticsPage";
 import UrlStatsPage from "@/components/UrlsPage/UrlStatsPage";
 import { useAuth } from "@/context/AuthContext";
 import RedirectWithToast from "./RedirectWithToast";
+import { Loader } from "lucide-react";
 
 const AppRoutes = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
+
+  if (isLoading)
+    return <Loader className="animate-spin h-5 w-5 text-gray-500" />;
 
   return (
     <Routes>

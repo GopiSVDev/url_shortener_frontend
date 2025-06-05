@@ -11,7 +11,7 @@ import { Button } from "../ui/button";
 import { toast } from "sonner";
 import { shortenUrl } from "@/api/urlApi";
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader, Loader2 } from "lucide-react";
 import axios from "axios";
 import { useUserUrlStats } from "@/api/analyticsApi";
 
@@ -113,7 +113,11 @@ export function SectionCards() {
         <CardHeader className="relative">
           <CardDescription>Total Clicks</CardDescription>
           <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
-            {stats?.totalClicks}
+            {stats ? (
+              stats.totalClicks
+            ) : (
+              <Loader className="animate-spin h-5 w-5 text-gray-500" />
+            )}
           </CardTitle>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1 text-sm">
@@ -124,7 +128,11 @@ export function SectionCards() {
         <CardHeader className="relative">
           <CardDescription>Total Links</CardDescription>
           <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
-            {stats?.totalLinks}
+            {stats ? (
+              stats.totalLinks
+            ) : (
+              <Loader className="animate-spin h-5 w-5 text-gray-500" />
+            )}
           </CardTitle>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1 text-sm">
