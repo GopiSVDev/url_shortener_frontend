@@ -15,6 +15,8 @@ const SingleUrlCard = ({
   onEdit: () => void;
   onDelete: () => void;
 }) => {
+  const { originalUrl, shortCode, createdAt, updatedAt } = url;
+
   return (
     <Card>
       <CardContent className="w-full space-y-2">
@@ -22,7 +24,17 @@ const SingleUrlCard = ({
           <div className="flex flex-col gap-2">
             <div className="text-sm text-muted-foreground">Original URL:</div>
             <div className="text-sm break-all">
-              <Link to={`/dashboard/urls/${url.id}`}>{url.originalUrl}</Link>
+              <Link
+                to={`/dashboard/urls/${shortCode}`}
+                state={{
+                  originalUrl,
+                  shortCode,
+                  createdAt,
+                  updatedAt,
+                }}
+              >
+                {originalUrl}
+              </Link>
             </div>
           </div>
           <div className="flex gap-3 items-center ml-3">
@@ -36,21 +48,28 @@ const SingleUrlCard = ({
         </div>
 
         <div className="flex items-center gap-2 mt-2">
-          <Input readOnly value={url.shortUrl} className="flex-1" />
+          <Input
+            readOnly
+            value={`https://url-shortener-backend-1em6.onrender.com/${shortCode}`}
+            className="flex-1"
+          />
           <Button
             variant="outline"
             size="icon"
             onClick={() => {
-              navigator.clipboard.writeText(url.shortUrl);
+              navigator.clipboard.writeText(
+                `https://url-shortener-backend-1em6.onrender.com/${shortCode}`
+              );
               toast("URL copied");
             }}
+            className="cursor-pointer"
           >
             <CopyIcon size={16} />
           </Button>
         </div>
 
         <div className="text-xs text-muted-foreground mt-1">
-          Created at: {url.createdAt}
+          Created at: {createdAt.split("T")[0]}
         </div>
       </CardContent>
     </Card>

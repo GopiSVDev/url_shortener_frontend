@@ -67,10 +67,23 @@ const transformDeviceData = (data: Record<string, number>) => {
   return result;
 };
 
-const DeviceStats = () => {
+const DeviceStats = ({
+  clicksByDeviceType,
+}: {
+  clicksByDeviceType: { device: string; clicks: number }[];
+}) => {
   const { data: stats } = useUserUrlStats();
 
-  const chartData = transformDeviceData(stats?.clicksByDeviceType || {});
+  const deviceClicksMap =
+    clicksByDeviceType &&
+    clicksByDeviceType.reduce((acc, curr) => {
+      acc[curr.device.toLowerCase()] = curr.clicks;
+      return acc;
+    }, {} as Record<string, number>);
+
+  const deviceStats = deviceClicksMap ?? stats?.clicksByDeviceType ?? [];
+
+  const chartData = transformDeviceData(deviceStats);
 
   const totalVisitors = React.useMemo(() => {
     return chartData.reduce((acc, curr) => acc + curr.clicks, 0);

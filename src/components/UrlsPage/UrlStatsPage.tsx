@@ -1,5 +1,5 @@
 // import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import {
   Card,
   CardContent,
@@ -16,112 +16,122 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-// import { Skeleton } from "@/components/ui/skeleton";
 import DeviceStats from "../Analytics/DeviceStats";
 import LineChartStats from "../Analytics/LineChartStats";
+import { useUrlStats } from "@/api/analyticsApi";
+import { Loader } from "lucide-react";
+
+type RouteState = {
+  originalUrl: string;
+  shortCode: string;
+  createdAt: string;
+  updatedAt: string;
+};
 
 type UrlStats = {
   originalUrl: string;
-  shortUrl: string;
+  shortCode: string;
   createdAt: string;
+  updatedAt: string;
   totalClicks: number;
-  lastClickedAt: string | null;
-  topLocations: { location: string; clicks: number }[];
-  clickLogs: {
-    id: string;
-    timestamp: string;
-    location: string;
-    device: string;
-  }[];
-};
-
-const stats: UrlStats = {
-  originalUrl: "https://example.com/very/long/url/path",
-  shortUrl: "https://sho.rt/abc123",
-  createdAt: "2025-05-29T12:00:00Z",
-  totalClicks: 1587,
-  lastClickedAt: "2025-05-28T18:45:00Z",
-  topLocations: [
-    { location: "United States", clicks: 700 },
-    { location: "India", clicks: 400 },
-    { location: "Germany", clicks: 200 },
-    { location: "Brazil", clicks: 150 },
-    { location: "Canada", clicks: 137 },
-  ],
-  clickLogs: [
-    {
-      id: "log1",
-      timestamp: "2025-05-28T18:45:00Z",
-      location: "United States",
-      device: "Desktop",
-    },
-    {
-      id: "log2",
-      timestamp: "2025-05-28T17:30:00Z",
-      location: "India",
-      device: "Mobile",
-    },
-    {
-      id: "log3",
-      timestamp: "2025-05-28T16:00:00Z",
-      location: "Germany",
-      device: "Tablet",
-    },
-  ],
+  clicksByDate: { date: string; clicks: number }[];
+  clicksByDeviceType: { device: string; clicks: number }[];
+  clicksByCountry: { location: string; clicks: number }[];
+  clicksByCity: { location: string; clicks: number }[];
 };
 
 export default function UrlStatsPage() {
-  const { id } = useParams<{ id: string }>();
-  //   const [stats, setStats] = useState<UrlStats | null>(dummyStats);
-  //   const [loading, setLoading] = useState(false);
+  const { shortCode } = useParams<{ shortCode: string }>();
+  const location = useLocation();
+  const state = location.state as RouteState;
 
-  //   if (loading) return <Skeleton className="h-96 w-full" />;
+  const { data: stats, isLoading } = useUrlStats(shortCode!);
 
-  if (!stats)
+  if (isLoading || !stats || !state)
     return (
-      <p className="text-center mt-10 text-muted-foreground">No data found.</p>
+      <div className="flex justify-center items-center">
+        <Loader className="mt-10 animate-spin text-gray-500" size={50} />
+      </div>
     );
+
+  const fullStats: UrlStats = {
+    originalUrl: state.originalUrl,
+    shortCode: state.shortCode,
+    createdAt: state.createdAt,
+    updatedAt: state.updatedAt,
+    totalClicks: stats.totalClicks,
+    clicksByDate: Object.entries(stats.clicksByDate).map(([date, clicks]) => ({
+      date,
+      clicks,
+    })),
+    clicksByDeviceType: Object.entries(stats.clicksByDeviceType).map(
+      ([device, clicks]) => ({
+        device,
+        clicks,
+      })
+    ),
+    clicksByCountry: Object.entries(stats.clicksByCountry).map(
+      ([location, clicks]) => ({
+        location,
+        clicks,
+      })
+    ),
+    clicksByCity: Object.entries(stats.clicksByCity).map(
+      ([location, clicks]) => ({
+        location,
+        clicks,
+      })
+    ),
+  };
 
   return (
     <div className="max-w-5xl mx-auto space-y-8 p-4">
       <Card>
         <CardHeader>
           <div>
-            <h3 className="font-semibold">Short URL {id}</h3>
+            <h3 className="font-semibold">Short URL {shortCode}</h3>
             <p className="text-blue-600 hover:underline cursor-pointer truncate">
-              {stats.shortUrl}
+              {`https://url-shortener-backend-1em6.onrender.com/${fullStats.shortCode}`}
             </p>
           </div>
         </CardHeader>
         <CardContent className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           <div className="col-span-2">
             <h3 className="font-semibold">Original URL</h3>
-            <p className="truncate">{stats.originalUrl}</p>
+            <p className="truncate">{fullStats.originalUrl}</p>
           </div>
           <div>
             <h3 className="font-semibold">Created At</h3>
-            <p>{new Date(stats.createdAt).toLocaleDateString()}</p>
+            <p>{new Date(fullStats.createdAt).toLocaleDateString()}</p>
+          </div>
+          <div>
+            <h3 className="font-semibold">Updated At</h3>
+            <p>
+              {fullStats.updatedAt
+                ? new Date(fullStats.updatedAt).toLocaleDateString()
+                : "------"}
+            </p>
           </div>
           <div>
             <h3 className="font-semibold">Total Clicks</h3>
-            <p>{stats.totalClicks}</p>
+            <p>{fullStats.totalClicks}</p>
           </div>
         </CardContent>
       </Card>
 
       <Separator />
 
-      <LineChartStats />
+      <LineChartStats clicksByDate={fullStats.clicksByDate} />
 
       <Separator />
 
       <Card>
         <CardHeader>
-          <CardTitle>Top Locations</CardTitle>
-          <CardDescription>Visitor countries or cities</CardDescription>
+          <CardTitle>Top Visitors By Country</CardTitle>
+          <CardDescription>Visitor countries</CardDescription>
         </CardHeader>
         <CardContent>
-          {stats.topLocations.length === 0 ? (
+          {fullStats.clicksByCountry.length === 0 ? (
             <p className="text-muted-foreground">No location data.</p>
           ) : (
             <Table>
@@ -132,7 +142,7 @@ export default function UrlStatsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {stats.topLocations.map(({ location, clicks }) => (
+                {fullStats.clicksByCountry.map(({ location, clicks }) => (
                   <TableRow key={location}>
                     <TableCell>{location}</TableCell>
                     <TableCell>{clicks}</TableCell>
@@ -146,35 +156,27 @@ export default function UrlStatsPage() {
 
       <Separator />
 
-      <DeviceStats />
-
-      <Separator />
-
       <Card>
         <CardHeader>
-          <CardTitle>Recent Clicks</CardTitle>
-          <CardDescription>Latest individual click events</CardDescription>
+          <CardTitle>Top Visitors By Cities</CardTitle>
+          <CardDescription>Visitor cities</CardDescription>
         </CardHeader>
         <CardContent>
-          {stats.clickLogs.length === 0 ? (
-            <p className="text-muted-foreground">No recent clicks.</p>
+          {fullStats.clicksByCity.length === 0 ? (
+            <p className="text-muted-foreground">No location data.</p>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Timestamp</TableHead>
                   <TableHead>Location</TableHead>
-                  <TableHead>Device</TableHead>
+                  <TableHead>Clicks</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {stats.clickLogs.map(({ id, timestamp, location, device }) => (
-                  <TableRow key={id}>
-                    <TableCell>
-                      {new Date(timestamp).toLocaleString()}
-                    </TableCell>
-                    <TableCell>{location || "Unknown"}</TableCell>
-                    <TableCell>{device || "Unknown"}</TableCell>
+                {fullStats.clicksByCity.map(({ location, clicks }) => (
+                  <TableRow key={location}>
+                    <TableCell>{location}</TableCell>
+                    <TableCell>{clicks}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -182,6 +184,12 @@ export default function UrlStatsPage() {
           )}
         </CardContent>
       </Card>
+
+      <Separator />
+
+      <DeviceStats clicksByDeviceType={fullStats.clicksByDeviceType} />
+
+      <Separator />
     </div>
   );
 }

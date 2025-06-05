@@ -5,6 +5,7 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
+import { useTheme } from "next-themes";
 
 import {
   Line,
@@ -14,9 +15,15 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { lineChartData as chartData } from "@/data/dummyAnalytics";
 
-const LineChartStats = () => {
+const LineChartStats = ({
+  clicksByDate,
+}: {
+  clicksByDate: { date: string; clicks: number }[];
+}) => {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+
   return (
     <Card>
       <CardHeader>
@@ -25,20 +32,22 @@ const LineChartStats = () => {
       </CardHeader>
       <CardContent style={{ height: 300 }}>
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={chartData}>
+          <LineChart data={clicksByDate}>
             <XAxis dataKey="date" />
             <YAxis />
-            <Tooltip />
-            <Line
-              type="monotone"
-              dataKey="desktop"
-              stroke="var(--chart-1)"
-              strokeWidth={2}
+            <Tooltip
+              contentStyle={{
+                backgroundColor: isDark ? "#1f2937" : "#ffffff", // dark:bg-gray-800, light:bg-white
+                borderColor: isDark ? "#374151" : "#e5e7eb", // dark:border-gray-700
+                color: isDark ? "#f9fafb" : "#111827", // dark:text-gray-50
+              }}
+              labelStyle={{ color: isDark ? "#d1d5db" : "#374151" }}
+              itemStyle={{ color: isDark ? "#f9fafb" : "#111827" }}
             />
             <Line
               type="monotone"
-              dataKey="mobile"
-              stroke="var(--chart-2)"
+              dataKey="clicks"
+              stroke="var(--chart-1)"
               strokeWidth={2}
             />
           </LineChart>

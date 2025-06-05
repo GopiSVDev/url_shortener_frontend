@@ -20,12 +20,14 @@ import {
 } from "@/components/ui/alert-dialog";
 import SingleUrlCard from "./SingleUrlCard";
 import CardSkeleton from "./CardSkeleton";
+import { fetchUrls } from "@/api/urlApi";
 
 export interface ShortUrl {
   id: string;
   originalUrl: string;
-  shortUrl: string;
+  shortCode: string;
   createdAt: string;
+  updatedAt: string;
 }
 
 export default function AllUrlsPage() {
@@ -36,28 +38,19 @@ export default function AllUrlsPage() {
   const [editInput, setEditInput] = useState("");
 
   useEffect(() => {
-    async function fetchUrls() {
+    const fetchData = async () => {
       setLoading(true);
-      setTimeout(() => {
-        setUrls([
-          {
-            id: "1",
-            originalUrl: "https://example.com/long/url/1",
-            shortUrl: "https://sho.rt/a1b2c3",
-            createdAt: "2025-05-29",
-          },
-          {
-            id: "2",
-            originalUrl: "https://example.com/long/url/2",
-            shortUrl: "https://sho.rt/d4e5f6",
-            createdAt: "2025-05-28",
-          },
-        ]);
+      try {
+        const urls = await fetchUrls();
+        setUrls(urls);
+      } catch (error) {
+        console.error("Failed to fetch URLs", error);
+      } finally {
         setLoading(false);
-      }, 500);
-    }
+      }
+    };
 
-    fetchUrls();
+    fetchData();
   }, []);
 
   const handleUpdate = () => {

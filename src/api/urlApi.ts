@@ -14,3 +14,9 @@ export const shortenUrl = async (longUrl: string) => {
     shortCode,
   };
 };
+
+export const fetchUrls = async () => {
+  const response = await axios.get("/user/urls");
+
+  return response.data;
+};
