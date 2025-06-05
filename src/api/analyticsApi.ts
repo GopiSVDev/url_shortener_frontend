@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import axios from "./axiosInstance";
 import { toast } from "sonner";
 
@@ -11,22 +11,22 @@ interface UrlAnalyticsDto {
   totalClicks: number;
 }
 
+const fetchStats = async (): Promise<UrlAnalyticsDto> => {
+  try {
+    const response = await axios.get<UrlAnalyticsDto>("/user/urls/stats");
+    return response.data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    toast(error?.response?.data?.message || "Failed to fetch stats");
+    throw error;
+  }
+};
+
 export function useUserUrlStats() {
-  const [stats, setStats] = useState<UrlAnalyticsDto | null>(null);
-
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const response = await axios.get<UrlAnalyticsDto>("/user/urls/stats");
-        setStats(response.data);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      } catch (error: any) {
-        toast(error || "Unknown Error");
-      }
-    };
-
-    fetchStats();
-  }, []);
-
-  return { stats };
+  return useQuery<UrlAnalyticsDto>({
+    queryKey: ["user-url-stats"],
+    queryFn: fetchStats,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+  });
 }

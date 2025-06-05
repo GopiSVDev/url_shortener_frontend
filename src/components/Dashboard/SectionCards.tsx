@@ -20,7 +20,7 @@ export function SectionCards() {
   const [shortUrl, setShortUrl] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const { stats } = useUserUrlStats();
+  const { data: stats } = useUserUrlStats();
 
   const handleShorten = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

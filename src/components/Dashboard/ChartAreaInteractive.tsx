@@ -45,7 +45,7 @@ const chartConfig = {
 export function ChartAreaInteractive() {
   const isMobile = useIsMobile();
   const [timeRange, setTimeRange] = React.useState("30d");
-  const { stats } = useUserUrlStats();
+  const { data: stats } = useUserUrlStats();
 
   React.useEffect(() => {
     if (isMobile) {
