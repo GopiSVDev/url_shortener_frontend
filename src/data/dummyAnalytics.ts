@@ -1,9 +1,3 @@
-export const pieChart = [
-  { device: "Mobile", clicks: 275, fill: "var(--color-chrome)" },
-  { device: "Desktop", clicks: 200, fill: "var(--color-safari)" },
-  { device: "Others", clicks: 190, fill: "var(--color-other)" },
-];
-
 export const lineChartData = [
   { month: "January", desktop: 186, mobile: 80 },
   { month: "February", desktop: 305, mobile: 200 },

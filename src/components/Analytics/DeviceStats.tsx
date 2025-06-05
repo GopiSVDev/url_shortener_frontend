@@ -7,27 +7,19 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { pieChart as chartData } from "@/data/dummyAnalytics";
+import { useUserUrlStats } from "@/api/analyticsApi";
 
 const chartConfig = {
   visitors: {
     label: "Visitors",
   },
-  chrome: {
-    label: "Chrome",
+  mobile: {
+    label: "Mobile",
     color: "var(--chart-1)",
   },
-  safari: {
-    label: "Safari",
+  desktop: {
+    label: "Desktop",
     color: "var(--chart-2)",
-  },
-  firefox: {
-    label: "Firefox",
-    color: "var(--chart-3)",
-  },
-  edge: {
-    label: "Edge",
-    color: "var(--chart-4)",
   },
   other: {
     label: "Other",
@@ -35,10 +27,54 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
+const transformDeviceData = (data: Record<string, number>) => {
+  let mobileClicks = 0;
+  let desktopClicks = 0;
+  let othersClicks = 0;
+
+  for (const [device, clicks] of Object.entries(data)) {
+    const key = device.toLowerCase();
+    if (key === "mobile") {
+      mobileClicks += clicks;
+    } else if (key === "desktop") {
+      desktopClicks += clicks;
+    } else {
+      othersClicks += clicks;
+    }
+  }
+
+  const result = [
+    {
+      device: chartConfig.mobile.label,
+      clicks: mobileClicks,
+      fill: chartConfig.mobile.color,
+    },
+    {
+      device: chartConfig.desktop.label,
+      clicks: desktopClicks,
+      fill: chartConfig.desktop.color,
+    },
+  ];
+
+  if (othersClicks > 0) {
+    result.push({
+      device: chartConfig.other.label,
+      clicks: othersClicks,
+      fill: chartConfig.other.color,
+    });
+  }
+
+  return result;
+};
+
 const DeviceStats = () => {
+  const { data: stats } = useUserUrlStats();
+
+  const chartData = transformDeviceData(stats?.clicksByDeviceType || {});
+
   const totalVisitors = React.useMemo(() => {
     return chartData.reduce((acc, curr) => acc + curr.clicks, 0);
-  }, []);
+  }, [chartData]);
 
   return (
     <Card className="flex flex-col">

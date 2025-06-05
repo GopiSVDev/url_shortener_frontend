@@ -1,3 +1,4 @@
+import { useUserUrlStats } from "@/api/analyticsApi";
 import DeviceStats from "@/components/Analytics/DeviceStats";
 import { ChartAreaInteractive } from "@/components/Dashboard/ChartAreaInteractive";
 import {
@@ -17,54 +18,32 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-const stats = {
-  originalUrl: "https://example.com/very/long/url/path",
-  shortUrl: "https://sho.rt/abc123",
-  createdAt: "2025-05-29T12:00:00Z",
-  totalClicks: 1587,
-  lastClickedAt: "2025-05-28T18:45:00Z",
-  clicksOverTime: [
-    { date: "2025-05-22", clicks: 45 },
-    { date: "2025-05-23", clicks: 78 },
-    { date: "2025-05-24", clicks: 120 },
-    { date: "2025-05-25", clicks: 300 },
-    { date: "2025-05-26", clicks: 400 },
-    { date: "2025-05-27", clicks: 350 },
-    { date: "2025-05-28", clicks: 294 },
-  ],
-  topLocations: [
-    { location: "United States", clicks: 700 },
-    { location: "India", clicks: 400 },
-    { location: "Germany", clicks: 200 },
-    { location: "Brazil", clicks: 150 },
-    { location: "Canada", clicks: 137 },
-  ],
-  clickLogs: [
-    {
-      id: "log1",
-      timestamp: "2025-05-28T18:45:00Z",
-      location: "United States",
-
-      device: "Desktop",
-    },
-    {
-      id: "log2",
-      timestamp: "2025-05-28T17:30:00Z",
-      location: "India",
-
-      device: "Mobile",
-    },
-    {
-      id: "log3",
-      timestamp: "2025-05-28T16:00:00Z",
-      location: "Germany",
-      device: "Tablet",
-    },
-  ],
-};
+import { Loader } from "lucide-react";
 
 const AnalyticsPage = () => {
+  const { data: stats } = useUserUrlStats();
+
+  const clicksByCountry = Object.entries(stats?.clicksByCountry || {}).map(
+    ([location, clicks]) => ({
+      location,
+      clicks,
+    })
+  );
+
+  const clicksByDeviceType = Object.entries(
+    stats?.clicksByDeviceType || {}
+  ).map(([device, clicks]) => ({
+    device,
+    clicks,
+  }));
+
+  const clicksByCity = Object.entries(stats?.clicksByCity || {}).map(
+    ([location, clicks]) => ({
+      location,
+      clicks,
+    })
+  );
+
   return (
     <div className="flex flex-1 flex-col">
       <div className="@container/main flex flex-1 flex-col gap-2">
@@ -74,7 +53,11 @@ const AnalyticsPage = () => {
               <CardHeader className="relative">
                 <CardDescription>Total Clicks</CardDescription>
                 <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
-                  500
+                  {stats ? (
+                    stats.totalClicks
+                  ) : (
+                    <Loader className="animate-spin h-5 w-5 text-gray-500" />
+                  )}
                 </CardTitle>
               </CardHeader>
               <CardFooter className="flex-col items-start gap-1 text-sm">
@@ -87,7 +70,11 @@ const AnalyticsPage = () => {
               <CardHeader className="relative">
                 <CardDescription>Total Links</CardDescription>
                 <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
-                  19
+                  {stats ? (
+                    stats.totalLinks
+                  ) : (
+                    <Loader className="animate-spin h-5 w-5 text-gray-500" />
+                  )}
                 </CardTitle>
               </CardHeader>
               <CardFooter className="flex-col items-start gap-1 text-sm">
@@ -100,12 +87,20 @@ const AnalyticsPage = () => {
               <CardHeader className="relative">
                 <CardDescription>Top Country</CardDescription>
                 <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
-                  India
+                  {stats ? (
+                    clicksByCountry.length > 0 ? (
+                      clicksByCountry[0].location
+                    ) : (
+                      <span>--</span>
+                    )
+                  ) : (
+                    <Loader className="animate-spin h-5 w-5 text-gray-500" />
+                  )}
                 </CardTitle>
               </CardHeader>
               <CardFooter className="flex-col items-start gap-1 text-sm">
                 <div className="text-muted-foreground">
-                  Most number of clicks
+                  Top country by clicks
                 </div>
               </CardFooter>
             </Card>
@@ -113,12 +108,21 @@ const AnalyticsPage = () => {
               <CardHeader className="relative">
                 <CardDescription>Top Device</CardDescription>
                 <CardTitle className="@[250px]/card:text-3xl text-2xl font-semibold tabular-nums">
-                  Mobile
+                  {stats ? (
+                    clicksByDeviceType.length > 0 ? (
+                      clicksByDeviceType[0].device.charAt(0).toUpperCase() +
+                      clicksByDeviceType[0].device.slice(1)
+                    ) : (
+                      <span>--</span>
+                    )
+                  ) : (
+                    <Loader className="animate-spin h-5 w-5 text-gray-500" />
+                  )}
                 </CardTitle>
               </CardHeader>
               <CardFooter className="flex-col items-start gap-1 text-sm">
                 <div className="text-muted-foreground">
-                  Most number of clicks
+                  Top device by clicks
                 </div>
               </CardFooter>
             </Card>
@@ -131,13 +135,14 @@ const AnalyticsPage = () => {
           {/*  */}
           <div className="px-6 space-y-5">
             <Separator />
+
             <Card>
               <CardHeader>
-                <CardTitle>Top Locations</CardTitle>
-                <CardDescription>Visitor countries or cities</CardDescription>
+                <CardTitle>Top Visitors By Country</CardTitle>
+                <CardDescription>Visitor countries</CardDescription>
               </CardHeader>
               <CardContent>
-                {stats.topLocations.length === 0 ? (
+                {clicksByCountry.length === 0 ? (
                   <p className="text-muted-foreground">No location data.</p>
                 ) : (
                   <Table>
@@ -148,7 +153,38 @@ const AnalyticsPage = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {stats.topLocations.map(({ location, clicks }) => (
+                      {clicksByCountry.map(({ location, clicks }) => (
+                        <TableRow key={location}>
+                          <TableCell>{location}</TableCell>
+                          <TableCell>{clicks}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
+              </CardContent>
+            </Card>
+
+            <Separator />
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Top Visitors By Cities</CardTitle>
+                <CardDescription>Visitor cities</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {clicksByCity.length === 0 ? (
+                  <p className="text-muted-foreground">No location data.</p>
+                ) : (
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Location</TableHead>
+                        <TableHead>Clicks</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {clicksByCity.map(({ location, clicks }) => (
                         <TableRow key={location}>
                           <TableCell>{location}</TableCell>
                           <TableCell>{clicks}</TableCell>
@@ -163,45 +199,6 @@ const AnalyticsPage = () => {
             <Separator />
 
             <DeviceStats />
-
-            <Separator />
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Recent Clicks</CardTitle>
-                <CardDescription>
-                  Latest individual click events
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {stats.clickLogs.length === 0 ? (
-                  <p className="text-muted-foreground">No recent clicks.</p>
-                ) : (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Timestamp</TableHead>
-                        <TableHead>Location</TableHead>
-                        <TableHead>Device</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {stats.clickLogs.map(
-                        ({ id, timestamp, location, device }) => (
-                          <TableRow key={id}>
-                            <TableCell>
-                              {new Date(timestamp).toLocaleString()}
-                            </TableCell>
-                            <TableCell>{location || "Unknown"}</TableCell>
-                            <TableCell>{device || "Unknown"}</TableCell>
-                          </TableRow>
-                        )
-                      )}
-                    </TableBody>
-                  </Table>
-                )}
-              </CardContent>
-            </Card>
           </div>
         </div>
       </div>
