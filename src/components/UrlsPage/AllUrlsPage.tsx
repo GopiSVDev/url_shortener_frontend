@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import SingleUrlCard from "./SingleUrlCard";
 import CardSkeleton from "./CardSkeleton";
-import { fetchUrls, updateUrl } from "@/api/urlApi";
+import { deleteUrl, fetchUrls, updateUrl } from "@/api/urlApi";
 
 export interface ShortUrl {
   id: string;
@@ -38,8 +38,8 @@ export default function AllUrlsPage() {
   const [editOriginalUrl, setEditOriginalUrl] = useState("");
   const [editCustomCode, setEditCustomCode] = useState("");
   const [editExpirationDate, setEditExpirationDate] = useState("");
-  const [deleting, setDeleting] = useState<ShortUrl | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [deleting, setDeleting] = useState<ShortUrl | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -83,32 +83,23 @@ export default function AllUrlsPage() {
         expirationDate: editExpirationDate,
       });
 
-      setUrls((prev) =>
-        prev.map((url) =>
-          url.id === editing.id
-            ? {
-                ...url,
-                originalUrl: editOriginalUrl,
-                customCode: editCustomCode,
-                expirationDate: editExpirationDate,
-              }
-            : url
-        )
-      );
-
       setEditing(null);
+      setRefreshTrigger((prev) => prev + 1);
     } catch (error) {
       console.error("Failed to update URL", error);
-    } finally {
-      setRefreshTrigger((prev) => prev + 1);
     }
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!deleting) return;
-    setUrls((prev) => prev.filter((url) => url.id !== deleting.id));
-    setDeleting(null);
-    toast("URL deleted");
+
+    try {
+      await deleteUrl(deleting.shortCode);
+      setDeleting(null);
+      setRefreshTrigger((prev) => prev + 1);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   if (loading) {

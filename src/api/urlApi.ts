@@ -38,3 +38,13 @@ export const updateUrl = async (
     throw error;
   }
 };
+
+export const deleteUrl = async (shortCode: string) => {
+  try {
+    await axios.delete(`/user/urls/${shortCode}`);
+    toast.success("Deleted successfully");
+  } catch (error) {
+    toast.error("Error deleting URL");
+    throw error;
+  }
+};
