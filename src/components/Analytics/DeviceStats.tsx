@@ -7,7 +7,6 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { useUserUrlStats } from "@/api/analyticsApi";
 
 const chartConfig = {
   visitors: {
@@ -72,8 +71,6 @@ const DeviceStats = ({
 }: {
   clicksByDeviceType: { device: string; clicks: number }[];
 }) => {
-  const { data: stats } = useUserUrlStats();
-
   const deviceClicksMap =
     clicksByDeviceType &&
     clicksByDeviceType.reduce((acc, curr) => {
@@ -81,9 +78,7 @@ const DeviceStats = ({
       return acc;
     }, {} as Record<string, number>);
 
-  const deviceStats = deviceClicksMap ?? stats?.clicksByDeviceType ?? [];
-
-  const chartData = transformDeviceData(deviceStats);
+  const chartData = transformDeviceData(deviceClicksMap);
 
   const totalVisitors = React.useMemo(() => {
     return chartData.reduce((acc, curr) => acc + curr.clicks, 0);

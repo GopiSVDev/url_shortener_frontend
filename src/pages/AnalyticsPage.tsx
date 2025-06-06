@@ -198,7 +198,18 @@ const AnalyticsPage = () => {
 
             <Separator />
 
-            <DeviceStats />
+            <DeviceStats
+              clicksByDeviceType={
+                stats?.clicksByDeviceType
+                  ? Object.entries(stats.clicksByDeviceType).map(
+                      ([device, clicks]) => ({
+                        device,
+                        clicks,
+                      })
+                    )
+                  : []
+              }
+            />
           </div>
         </div>
       </div>
