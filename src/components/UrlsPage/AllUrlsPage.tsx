@@ -132,6 +132,7 @@ export default function AllUrlsPage() {
             <div>
               <label className="block text-sm font-medium">Original URL</label>
               <Input
+                className="dark:bg-gray-700 dark:border-gray-600"
                 value={editOriginalUrl}
                 onChange={(e) => setEditOriginalUrl(e.target.value)}
               />
@@ -140,6 +141,7 @@ export default function AllUrlsPage() {
             <div>
               <label className="block text-sm font-medium">Custom Code</label>
               <Input
+                className="dark:bg-gray-700 dark:border-gray-600"
                 value={editCustomCode}
                 onChange={(e) => setEditCustomCode(e.target.value)}
               />
@@ -150,6 +152,7 @@ export default function AllUrlsPage() {
                 Expiration Date
               </label>
               <Input
+                className="dark:bg-gray-700 dark:border-gray-600"
                 type="date"
                 value={editExpirationDate}
                 onChange={(e) => setEditExpirationDate(e.target.value)}

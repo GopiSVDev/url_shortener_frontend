@@ -133,4 +133,8 @@ body {
   .container {
     @apply max-w-[1440px];
   }
+
+  .dark input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+  }
 }
