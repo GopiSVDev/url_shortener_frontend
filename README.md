@@ -4,6 +4,13 @@
 
 ---
 
+## 📺 Live Demo
+
+👉 **Check it out here:**  
+🔗 [Shortener Frontend](https://url-shortener-frontend-lilac.vercel.app)
+
+---
+
 ## ✨ Features ⭐
 
 - 🔒 **User Authentication**: Sign up and log in with secure JWT-based authentication.
@@ -28,14 +35,6 @@
 | **Authentication**   | JWT stored in `localStorage`                                                              |
 | **Linting**          | ESLint + Prettier                                                                         |
 | **Backend API**      | Spring Boot ([see backend code here](https://github.com/GopiSVDev/url_shortener_backend)) |
-
----
-
-## 📸 Live Demo 🎬
-
----
-
-Updating soon....
 
 ---
 
