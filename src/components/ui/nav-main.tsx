@@ -8,6 +8,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { Link } from "react-router-dom";
+import { useSidebar } from "@/hooks/use-sidebar";
 
 export function NavMain({
   items,
@@ -18,12 +19,20 @@ export function NavMain({
     icon?: LucideIcon;
   }[];
 }) {
+  const { isMobile, setOpenMobile } = useSidebar();
+
+  const handleClick = () => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  };
+
   return (
     <SidebarGroup>
       <SidebarGroupContent className="flex flex-col gap-2">
         <SidebarMenu>
           {items.map((item) => (
-            <Link to={item.url} key={item.title}>
+            <Link to={item.url} key={item.title} onClick={handleClick}>
               <SidebarMenuItem>
                 <SidebarMenuButton tooltip={item.title}>
                   {item.icon && <item.icon />}
