@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import SingleUrlCard from "./SingleUrlCard";
 import CardSkeleton from "./CardSkeleton";
-import { fetchUrls } from "@/api/urlApi";
+import { fetchUrls, updateUrl } from "@/api/urlApi";
 
 export interface ShortUrl {
   id: string;
@@ -28,14 +28,18 @@ export interface ShortUrl {
   shortCode: string;
   createdAt: string;
   updatedAt: string;
+  expirationDate: string;
 }
 
 export default function AllUrlsPage() {
   const [urls, setUrls] = useState<ShortUrl[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<ShortUrl | null>(null);
+  const [editOriginalUrl, setEditOriginalUrl] = useState("");
+  const [editCustomCode, setEditCustomCode] = useState("");
+  const [editExpirationDate, setEditExpirationDate] = useState("");
   const [deleting, setDeleting] = useState<ShortUrl | null>(null);
-  const [editInput, setEditInput] = useState("");
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -51,17 +55,53 @@ export default function AllUrlsPage() {
     };
 
     fetchData();
-  }, []);
+  }, [refreshTrigger]);
 
-  const handleUpdate = () => {
+  useEffect(() => {
+    if (editing) {
+      setEditOriginalUrl(editing.originalUrl || "");
+      setEditCustomCode(editing.shortCode || "");
+      setEditExpirationDate(editing.expirationDate?.slice(0, 10) || "");
+    }
+  }, [editing]);
+
+  const handleUpdate = async () => {
     if (!editing) return;
-    setUrls((prev) =>
-      prev.map((url) =>
-        url.id === editing.id ? { ...url, originalUrl: editInput } : url
-      )
-    );
-    setEditing(null);
-    toast("URL updated");
+
+    const today = new Date();
+    const selectedDate = new Date(editExpirationDate);
+
+    if (selectedDate < new Date(today.toDateString())) {
+      toast.error("Expiration date cannot be in the past");
+      return;
+    }
+
+    try {
+      await updateUrl(editing.shortCode, {
+        originalUrl: editOriginalUrl,
+        customCode: editCustomCode,
+        expirationDate: editExpirationDate,
+      });
+
+      setUrls((prev) =>
+        prev.map((url) =>
+          url.id === editing.id
+            ? {
+                ...url,
+                originalUrl: editOriginalUrl,
+                customCode: editCustomCode,
+                expirationDate: editExpirationDate,
+              }
+            : url
+        )
+      );
+
+      setEditing(null);
+    } catch (error) {
+      console.error("Failed to update URL", error);
+    } finally {
+      setRefreshTrigger((prev) => prev + 1);
+    }
   };
 
   const handleDelete = () => {
@@ -84,7 +124,7 @@ export default function AllUrlsPage() {
             url={url}
             onEdit={() => {
               setEditing(url);
-              setEditInput(url.originalUrl);
+              setEditOriginalUrl(url.originalUrl);
             }}
             onDelete={() => setDeleting(url)}
           />
@@ -96,10 +136,36 @@ export default function AllUrlsPage() {
           <DialogHeader>
             <DialogTitle>Edit Original URL</DialogTitle>
           </DialogHeader>
-          <Input
-            value={editInput}
-            onChange={(e) => setEditInput(e.target.value)}
-          />
+
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium">Original URL</label>
+              <Input
+                value={editOriginalUrl}
+                onChange={(e) => setEditOriginalUrl(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium">Custom Code</label>
+              <Input
+                value={editCustomCode}
+                onChange={(e) => setEditCustomCode(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium">
+                Expiration Date
+              </label>
+              <Input
+                type="date"
+                value={editExpirationDate}
+                onChange={(e) => setEditExpirationDate(e.target.value)}
+              />
+            </div>
+          </div>
+
           <DialogFooter>
             <Button onClick={handleUpdate}>Save</Button>
           </DialogFooter>
