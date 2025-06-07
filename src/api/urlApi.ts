@@ -1,10 +1,24 @@
 import { toast } from "sonner";
 import axios, { API_BASE_URL } from "./axiosInstance";
 
-export const shortenUrl = async (longUrl: string) => {
-  const response = await axios.post("/shorten", {
-    originalUrl: longUrl,
-  });
+export const shortenUrl = async (data: {
+  originalUrl: string;
+  customCode?: string | null;
+  expirationDate?: string | null;
+}) => {
+  let response = null;
+
+  if (!data.customCode) {
+    response = await axios.post("/shorten", {
+      originalUrl: data.originalUrl,
+    });
+  } else {
+    response = await axios.post("/shorten", {
+      originalUrl: data.originalUrl,
+      customCode: data.customCode,
+      expirationDate: data.expirationDate,
+    });
+  }
 
   const { shortCode } = response.data;
   const shortUrl = `${API_BASE_URL}/${shortCode}`;
