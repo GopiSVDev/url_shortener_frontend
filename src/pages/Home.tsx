@@ -38,7 +38,7 @@ const Home = () => {
     setLoading(true);
 
     try {
-      const result = await shortenUrl(longUrl);
+      const result = await shortenUrl({ originalUrl: longUrl });
       setShortUrl(result.shortUrl);
 
       const url = `${API_BASE_URL}/qr/` + result.shortCode;
