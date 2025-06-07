@@ -46,7 +46,13 @@ export default function AllUrlsPage() {
       setLoading(true);
       try {
         const urls = await fetchUrls();
-        setUrls(urls);
+
+        const sortedUrls = urls.sort(
+          (a: ShortUrl, b: ShortUrl) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+
+        setUrls(sortedUrls);
       } catch (error) {
         console.error("Failed to fetch URLs", error);
       } finally {

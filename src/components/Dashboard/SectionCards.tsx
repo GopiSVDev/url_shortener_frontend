@@ -215,11 +215,7 @@ export function SectionCards() {
           </div>
 
           <DialogFooter>
-            <Button
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              onClick={handleShortenCustom}
-              disabled={loading}
-            >
+            <Button onClick={handleShortenCustom} disabled={loading}>
               {loading ? (
                 <>
                   <Loader2 className="animate-spin h-5 w-5 mr-2" />
