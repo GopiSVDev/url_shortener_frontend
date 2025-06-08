@@ -52,12 +52,14 @@ export function ChartAreaInteractive() {
     }
   }, [isMobile]);
 
-  const chartData = Object.entries(stats?.clicksByDate || {}).map(
-    ([date, clicks]) => ({
+  const chartData = Object.entries(stats?.clicksByDate || {})
+    .map(([date, clicks]) => ({
       date,
       clicks,
-    })
-  );
+    }))
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+  console.log(chartData);
 
   const filteredData = chartData.filter((item) => {
     const referenceDate = new Date();
