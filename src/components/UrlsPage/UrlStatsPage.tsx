@@ -92,10 +92,14 @@ export default function UrlStatsPage() {
             <h3 className="font-semibold">Short URL</h3>
             <p className="text-blue-600 hover:underline cursor-pointer">
               <a
-                href={`https://url-shortener-backend-1em6.onrender.com/${fullStats.shortCode}`}
+                href={`${import.meta.env.VITE_BACKEND_API_URL}/${
+                  fullStats.shortCode
+                }`}
                 target="_blank"
               >
-                {`https://url-shortener-backend-1em6.onrender.com/${fullStats.shortCode}`}
+                {`${import.meta.env.VITE_BACKEND_API_URL}/${
+                  fullStats.shortCode
+                }`}
               </a>
             </p>
           </div>

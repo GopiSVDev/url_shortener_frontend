@@ -140,14 +140,14 @@ export function SectionCards() {
               )}
               <div className="flex justify-between items-center mt-2 w-full">
                 <Button
-                  className="cursor-pointer w-full max-w-1/2 text-white bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700"
+                  className="cursor-pointer w-full max-w-1/2 text-white bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700 rounded-r-none"
                   onClick={openDialog}
                   type="button"
                 >
                   Custom Link
                 </Button>
                 <Button
-                  className="cursor-pointer w-full max-w-1/2 text-white bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700"
+                  className="cursor-pointer w-full max-w-1/2 text-white bg-blue-500 hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700 rounded-l-none"
                   type="submit"
                 >
                   {loading && <Loader2 className="animate-spin h-5 w-5" />}

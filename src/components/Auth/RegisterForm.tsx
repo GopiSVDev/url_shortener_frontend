@@ -42,8 +42,16 @@ const RegisterForm = () => {
       newErrors.username = "Username is required";
     }
 
+    if (formValues.username.length < 4) {
+      newErrors.username = "Username should be atleast 4 characters";
+    }
+
     if (!formValues.password) {
       newErrors.password = "Password is required";
+    }
+
+    if (formValues.password.length < 8) {
+      newErrors.password = "Password must be atleast 8 characters";
     }
 
     if (!formValues.confirmPassword) {

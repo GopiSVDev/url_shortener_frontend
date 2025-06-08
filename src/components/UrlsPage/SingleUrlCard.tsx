@@ -50,7 +50,7 @@ const SingleUrlCard = ({
         <div className="flex items-center gap-2 mt-2">
           <Input
             readOnly
-            value={`https://url-shortener-backend-1em6.onrender.com/${shortCode}`}
+            value={`${import.meta.env.VITE_BACKEND_API_URL}/${shortCode}`}
             className="flex-1"
           />
           <Button
@@ -58,7 +58,7 @@ const SingleUrlCard = ({
             size="icon"
             onClick={() => {
               navigator.clipboard.writeText(
-                `https://url-shortener-backend-1em6.onrender.com/${shortCode}`
+                `${import.meta.env.VITE_BACKEND_API_URL}/${shortCode}`
               );
               toast("URL copied");
             }}

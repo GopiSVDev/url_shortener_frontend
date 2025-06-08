@@ -1,5 +1,6 @@
 import { BarChartIcon, Link, QrCode } from "lucide-react";
 import FeatureCard from "@/components/ui/FeatureCard";
+import AnimationWrapper from "@/layouts/AnimationWrapper";
 
 const Features = () => {
   const features = [
@@ -24,28 +25,30 @@ const Features = () => {
   ];
 
   return (
-    <div className="w-full px-6 py-10 flex justify-center items-center">
-      <div className="flex items-center flex-col gap-10">
-        <h1 className="font-bold text-5xl text-center">
-          One short link, infinite possibilities
-        </h1>
-        <h3 className="max-w-[900px] text-center md:text-2xl">
-          A short link is a powerful marketing tool when you use it carefully.
-          it is not just a link but a medium between you and your customer and
-          their destination.
-        </h3>
-        <div className="flex justify-center gap-5 flex-wrap">
-          {features.map(({ title, details, icon }) => (
-            <FeatureCard
-              key={title}
-              title={title}
-              details={details}
-              icon={icon}
-            />
-          ))}
+    <AnimationWrapper>
+      <div className="w-full px-6 py-10 flex justify-center items-center">
+        <div className="flex items-center flex-col gap-10">
+          <h1 className="font-bold text-5xl text-center">
+            One short link, infinite possibilities
+          </h1>
+          <h3 className="max-w-[900px] text-center md:text-2xl">
+            A short link is a powerful marketing tool when you use it carefully.
+            it is not just a link but a medium between you and your customer and
+            their destination.
+          </h3>
+          <div className="flex justify-center gap-5 flex-wrap">
+            {features.map(({ title, details, icon }) => (
+              <FeatureCard
+                key={title}
+                title={title}
+                details={details}
+                icon={icon}
+              />
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </AnimationWrapper>
   );
 };
 

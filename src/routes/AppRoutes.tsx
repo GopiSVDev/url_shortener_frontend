@@ -1,16 +1,13 @@
 import MainLayout from "@/layouts/MainLayout";
 import AuthPage from "@/pages/AuthPage";
 import Home from "@/pages/Home";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import Features from "@/pages/Features";
 
-import DashboardHome from "@/pages/DashboardHome";
-import UrlsPage from "@/pages/UrlsPage";
-import AnalyticsPage from "@/pages/AnalyticsPage";
-import UrlStatsPage from "@/components/UrlsPage/UrlStatsPage";
 import { useAuth } from "@/context/AuthContext";
 import RedirectWithToast from "./RedirectWithToast";
 import { Loader } from "lucide-react";
+import DashboardRoutes from "./DashboardRoutes";
 
 const AppRoutes = () => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -27,22 +24,7 @@ const AppRoutes = () => {
         <Route
           path="dashboard/*"
           element={
-            isAuthenticated ? (
-              <>
-                <Routes>
-                  <Route index element={<DashboardHome />} />
-                  <Route path="urls" element={<UrlsPage />} />
-                  <Route path="urls/:shortCode" element={<UrlStatsPage />} />
-                  <Route path="analytics" element={<AnalyticsPage />} />
-                  <Route
-                    path="*"
-                    element={<Navigate to="/dashboard" replace />}
-                  />
-                </Routes>
-              </>
-            ) : (
-              <RedirectWithToast />
-            )
+            isAuthenticated ? <DashboardRoutes /> : <RedirectWithToast />
           }
         />
       </Route>

@@ -4,6 +4,7 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 import { Outlet, useLocation } from "react-router-dom";
 import { ModeToggle } from "@/components/ui/ThemeToggle";
+import { AnimatePresence } from "motion/react";
 
 const MainLayout = () => {
   const location = useLocation();
@@ -31,7 +32,9 @@ const MainLayout = () => {
           <div className="@container/main flex flex-1 flex-col gap-2">
             <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
               <main>
-                <Outlet />
+                <AnimatePresence mode="wait">
+                  <Outlet key={location.pathname} />
+                </AnimatePresence>
               </main>
               <div className="px-4 lg:px-6"></div>
             </div>
