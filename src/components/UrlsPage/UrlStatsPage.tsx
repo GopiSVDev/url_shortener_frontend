@@ -64,24 +64,26 @@ export default function UrlStatsPage() {
       date,
       clicks,
     })),
-    clicksByDeviceType: Object.entries(stats.clicksByDeviceType).map(
-      ([device, clicks]) => ({
+
+    clicksByDeviceType: Object.entries(stats.clicksByDeviceType)
+      .map(([device, clicks]) => ({
         device,
         clicks,
-      })
-    ),
-    clicksByCountry: Object.entries(stats.clicksByCountry).map(
-      ([location, clicks]) => ({
+      }))
+      .sort((a, b) => b.clicks - a.clicks),
+
+    clicksByCountry: Object.entries(stats.clicksByCountry)
+      .map(([location, clicks]) => ({
         location,
         clicks,
-      })
-    ),
-    clicksByCity: Object.entries(stats.clicksByCity).map(
-      ([location, clicks]) => ({
+      }))
+      .sort((a, b) => b.clicks - a.clicks),
+    clicksByCity: Object.entries(stats.clicksByCity)
+      .map(([location, clicks]) => ({
         location,
         clicks,
-      })
-    ),
+      }))
+      .sort((a, b) => b.clicks - a.clicks),
   };
 
   return (
