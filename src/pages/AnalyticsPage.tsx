@@ -24,26 +24,26 @@ import { Loader } from "lucide-react";
 const AnalyticsPage = () => {
   const { data: stats } = useUserUrlStats();
 
-  const clicksByCountry = Object.entries(stats?.clicksByCountry || {}).map(
-    ([location, clicks]) => ({
+  const clicksByCountry = Object.entries(stats?.clicksByCountry || {})
+    .map(([location, clicks]) => ({
       location,
       clicks,
-    })
-  );
+    }))
+    .sort((a, b) => b.clicks - a.clicks);
 
-  const clicksByDeviceType = Object.entries(
-    stats?.clicksByDeviceType || {}
-  ).map(([device, clicks]) => ({
-    device,
-    clicks,
-  }));
+  const clicksByDeviceType = Object.entries(stats?.clicksByDeviceType || {})
+    .map(([device, clicks]) => ({
+      device,
+      clicks,
+    }))
+    .sort((a, b) => b.clicks - a.clicks);
 
-  const clicksByCity = Object.entries(stats?.clicksByCity || {}).map(
-    ([location, clicks]) => ({
+  const clicksByCity = Object.entries(stats?.clicksByCity || {})
+    .map(([location, clicks]) => ({
       location,
       clicks,
-    })
-  );
+    }))
+    .sort((a, b) => b.clicks - a.clicks);
 
   return (
     <AnimationWrapper>
